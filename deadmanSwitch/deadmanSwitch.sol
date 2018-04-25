@@ -1,12 +1,14 @@
-pragma solidity ^0.4.19;
+pragma solidity ^0.4.23;
 
 // Deadman Switch Trustfund: Allow withdraw of funds if checkin function not executed within timeframe
 
 contract deadmanSwitch {
   address public owner = msg.sender;
-  address public beneficiary = 0xdead;
+  //ACCOUNT #2 (insecure)
+  address public beneficiary = 0x3f1e38f7c085ca03a5ff35f1c354b4fc16645b32;
   uint constant year = 31556926;      // Seconds in year
   uint public min_time = 1545739200;  // Tuesday, December 25, 2018 7:00:00 AM GMT-05:00
+
   // set to true on initial deploy
   bool public alive = true;
   uint public balance = 0;
