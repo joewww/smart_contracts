@@ -5,7 +5,7 @@ pragma solidity ^0.4.23;
 import './SafeMath.sol';
 
 contract deadmanSwitch {
-  using SafeMath for uint256;
+  using SafeMath for uint;
 
   address public owner = msg.sender;
   address public beneficiary = 0xdead;
@@ -14,7 +14,6 @@ contract deadmanSwitch {
 
   // set to true on initial deploy
   bool public alive = true;
-//  uint public balance = 0;
 
   // Confirm alive (should be once a year, but owner can extend indefinitely)
   uint public checkins = 0;
@@ -27,9 +26,7 @@ contract deadmanSwitch {
   function checkin() public returns (bool) {
     if (msg.sender == owner || msg.sender == beneficiary) {
       alive = true;
-      min_time = year.add(min_time);
-      //min_time += year; // Add 1 year to min withdraw time
-      //checkins++;
+      min_time = year.add(min_time);  // Add 1 year to min withdraw time
       checkins = checkins.add(1);
       emit CheckIn(msg.sender); // logging event
       return true;
