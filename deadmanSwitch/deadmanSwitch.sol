@@ -2,24 +2,36 @@ pragma solidity ^0.4.23;
 
 // Deadman Switch Trustfund: Allow withdraw of funds if checkin function not executed within timeframe
 
+import './SafeMath.sol';
+
 contract deadmanSwitch {
+  using SafeMath for uint256;
+
   address public owner = msg.sender;
-  //ACCOUNT #2 (insecure)
-  address public beneficiary = 0x3f1e38f7c085ca03a5ff35f1c354b4fc16645b32;
+  address public beneficiary = 0xdead;
   uint constant year = 31556926;      // Seconds in year
   uint public min_time = 1545739200;  // Tuesday, December 25, 2018 7:00:00 AM GMT-05:00
 
   // set to true on initial deploy
   bool public alive = true;
-  uint public balance = 0;
+//  uint public balance = 0;
 
   // Confirm alive (should be once a year, but owner can extend indefinitely)
   uint public checkins = 0;
+
+  // Events
+  event CheckIn(address who);     // Log CheckIns
+  event CheckAlive(address who);  // Log Queries for alive status
+
+
   function checkin() public returns (bool) {
     if (msg.sender == owner || msg.sender == beneficiary) {
       alive = true;
-      min_time += year; // Add 1 year to min withdraw time
-      checkins++;
+      min_time = year.add(min_time);
+      //min_time += year; // Add 1 year to min withdraw time
+      //checkins++;
+      checkins = checkins.add(1);
+      emit CheckIn(msg.sender); // logging event
       return true;
     }
     return false;
@@ -29,6 +41,7 @@ contract deadmanSwitch {
   function checkAlive() public returns (bool) {
     if (block.timestamp > min_time) {
       alive = false; // RIP
+      emit CheckAlive(msg.sender);
       return true;
     }
   return true;
@@ -54,7 +67,8 @@ contract deadmanSwitch {
     }
   }
 
-  function () payable {
-    balance = msg.value;
+  function () public payable {
+  //  balance = msg.value;
   }
 }
+
